@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restapiproduct/feature/auth/presentation/controllers/login/login_cubit.dart';
+import 'package:restapiproduct/feature/auth/presentation/pages/signup_page.dart';
 import 'package:restapiproduct/feature/auth/presentation/widgets/form_filed_widget.dart';
 import 'package:restapiproduct/feature/products/presentation/screen/products_screen.dart';
 
@@ -119,7 +120,14 @@ class _LoginPageState extends State<LoginPage> {
                           "do not have an account?  ",
                           style: TextStyle(color: Colors.blue),
                         ),
-                        TextButton(onPressed: () {}, child: Text("Signup")),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => SignupPage()),
+                            );
+                          },
+                          child: Text("Signup"),
+                        ),
                       ],
                     ),
                     Padding(
