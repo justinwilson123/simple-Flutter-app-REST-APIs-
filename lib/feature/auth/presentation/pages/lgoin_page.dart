@@ -16,6 +16,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _password = TextEditingController();
   final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
   @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    _myKey.currentState!.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
