@@ -81,17 +81,28 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Enter your email",
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    FormFiledWidget(
-                      controller: _password,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Password is required";
-                        }
-                        return null;
+                    BlocSelector<LoginCubit, LoginState, bool>(
+                      selector: (state) => state.showPass,
+                      builder: (context, showPass) {
+                        return FormFiledWidget(
+                          controller: _password,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Password is required";
+                            }
+                            return null;
+                          },
+                          obscureText: showPass,
+                          icon: IconButton(
+                            onPressed: () =>
+                                context.read<LoginCubit>().showHidePassword(),
+                            icon: showPass
+                                ? Icon(Icons.lock)
+                                : Icon(Icons.lock_open),
+                          ),
+                          hintText: "Enter your password",
+                        );
                       },
-                      obscureText: false,
-                      icon: Icon(Icons.lock),
-                      hintText: "Enter your password",
                     ),
                     Spacer(),
                     Row(

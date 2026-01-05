@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:restapiproduct/core/classes/save_secure_storage.dart';
+import 'package:restapiproduct/feature/auth/presentation/pages/lgoin_page.dart';
 import 'package:restapiproduct/feature/products/presentation/screen/update_product_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../conatiner.dart' as di;
 
 import '../controller/cubit/products_cubit.dart';
 import 'add_product_screen.dart';
@@ -19,10 +20,17 @@ class ProductsScreen extends StatelessWidget {
         title: Text("Product"),
         leading: IconButton(
           onPressed: () async {
-            final sharedPreference = await SharedPreferences.getInstance();
-            final saveSecute = FlutterSecureStorage();
+            final sharedPreference = di.sl<SharedPreferences>();
+            final saveSecute = di.sl<FlutterSecureStorage>();
             await sharedPreference.clear();
             await saveSecute.deleteAll();
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (route) => false,
+              );
+            }
           },
           icon: Icon(Icons.logout),
         ),
