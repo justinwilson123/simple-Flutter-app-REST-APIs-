@@ -4,6 +4,15 @@ import 'package:http/http.dart' as http;
 import "package:internet_connection_checker_plus/internet_connection_checker_plus.dart";
 import 'package:restapiproduct/core/classes/cach_user.dart';
 import 'package:restapiproduct/core/classes/crud.dart';
+import 'package:restapiproduct/feature/auth/data/data/auth_data.dart';
+import 'package:restapiproduct/feature/auth/data/repositories/auth_repositories_imp.dart';
+import 'package:restapiproduct/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:restapiproduct/feature/auth/domain/usecase/login_use_case.dart';
+import 'package:restapiproduct/feature/auth/domain/usecase/logout_use_case.dart';
+import 'package:restapiproduct/feature/auth/domain/usecase/profile_use_case.dart';
+import 'package:restapiproduct/feature/auth/domain/usecase/signiup_use_case.dart';
+import 'package:restapiproduct/feature/auth/presentation/controllers/login/login_cubit.dart';
+import 'package:restapiproduct/feature/auth/presentation/controllers/signup/signup_cubit.dart';
 import 'package:restapiproduct/feature/products/domain/usecase/add_product_use_case.dart';
 import 'package:restapiproduct/feature/products/domain/usecase/get_all_products_use_case.dart';
 import 'package:restapiproduct/feature/products/domain/usecase/get_one_product_use_case.dart';
@@ -20,21 +29,49 @@ import 'feature/products/domain/usecase/delete_product_use_case.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
   //=========================== EXTERNAL
   sl.registerLazySingleton<http.Client>(() => http.Client());
   sl.registerLazySingleton<InternetConnection>(
     () => InternetConnection.createInstance(),
   );
   sl.registerLazySingleton(() => FlutterSecureStorage());
-  sl.registerLazySingleton(() => SharedPreferences.getInstance());
+  sl.registerLazySingleton(() => sharedPreferences);
   //=========================== CORE
 
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImp(sl()));
-  sl.registerLazySingleton<CrudInterface>(() => CrudHttp(client: sl()));
+  sl.registerLazySingleton<CrudInterface>(
+    () => CrudHttp(client: sl(), saveSecureStorage: sl()),
+  );
   sl.registerLazySingleton<SaveSecureStorage>(
     () => SaveSecureStorage(storage: sl()),
   );
   sl.registerLazySingleton(() => CachUser(sl()));
+
+  //============================ Auth
+
+  sl.registerFactory(() => LoginCubit(loginUseCase: sl(), cachUser: sl()));
+
+  sl.registerFactory(() => SignupCubit(sl()));
+
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoriesImp(
+      remoteDataSourceAuth: sl(),
+      networkInfo: sl(),
+      saveSecureStorage: sl(),
+      cachUser: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<RemoteDataSourceAuth>(
+    () => RemoteDataSourceAuthWithHttp(crud: sl(), cleint: sl()),
+  );
+
+  sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => ProfileUseCase(sl()));
+  sl.registerLazySingleton(() => SignupUseCase(sl()));
+
   //============================ product
   sl.registerFactory(
     () => ProductsCubit(

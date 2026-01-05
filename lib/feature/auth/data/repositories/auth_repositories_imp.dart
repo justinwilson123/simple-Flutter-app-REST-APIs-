@@ -6,6 +6,8 @@ import 'package:restapiproduct/core/error/failure.dart';
 
 import 'package:restapiproduct/feature/auth/domain/entity/user_entity.dart';
 
+import '../../../../core/classes/cach_user.dart';
+import '../../../../core/classes/save_secure_storage.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data/auth_data.dart';
 import '../models/user_model.dart';
@@ -13,18 +15,24 @@ import '../models/user_model.dart';
 class AuthRepositoriesImp implements AuthRepository {
   final RemoteDataSourceAuth remoteDataSourceAuth;
   final NetworkInfo networkInfo;
+  final SaveSecureStorage saveSecureStorage;
+  final CachUser cachUser;
 
   AuthRepositoriesImp({
     required this.remoteDataSourceAuth,
     required this.networkInfo,
+    required this.saveSecureStorage,
+    required this.cachUser,
   });
 
   @override
-  Future<Either<Failure, int>> login(String email, String password) async {
+  Future<Either<Failure, Unit>> login(String email, String password) async {
     if (await networkInfo.isConnected) {
       try {
-      final userId =   await remoteDataSourceAuth.login(email, password);
-        return Right(userId);
+        final user = await remoteDataSourceAuth.login(email, password);
+        await saveSecureStorage.saveToken(user["api_key"]);
+        await cachUser.saveUser(user['userId']);
+        return Right(unit);
       } on EmailNotCorrectException {
         return Left(EmailNotCorrectFailure());
       } on ServerException {

@@ -11,13 +11,13 @@ part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final LoginUseCase loginUseCase;
-  final ProfileUseCase profile;
-  final SaveSecureStorage saveSecureStorage;
+  // final ProfileUseCase profile;
+  // final SaveSecureStorage saveSecureStorage;
   final CachUser cachUser;
   LoginCubit({
     required this.loginUseCase,
-    required this.profile,
-    required this.saveSecureStorage,
+    // required this.profile,
+    // required this.saveSecureStorage,
     required this.cachUser,
   }) : super(LoginInitial());
 
@@ -27,24 +27,32 @@ class LoginCubit extends Cubit<LoginState> {
     emit(state.copyWith(isLoading: false));
     result.fold(
       (failure) => emit(state.copyWith(errorMessage: _errorMessagre(failure))),
-      (userId) {
-        cachUser.saveUser(userId);
-        getAPiToken();
+      (_) {
+        emit(state.copyWith(successMessage: "Login success"));
       },
     );
   }
 
-  getAPiToken() async {
-    final response = await profile.call();
-    response.fold(
-      (failure) {
-        emit(state.copyWith(errorMessage: _errorMessagre(failure)));
-      },
-      (apiKey) async {
-        await saveSecureStorage.saveToken(apiKey);
-        emit(state.copyWith(successMessage: "Login success"));
-      },
-    );
+  // getAPiToken() async {
+  //   final response = await profile.call();
+  //   response.fold(
+  //     (failure) {
+  //       emit(state.copyWith(errorMessage: _errorMessagre(failure)));
+  //     },
+  //     (apiKey) async {
+  //       // await saveSecureStorage.saveToken(apiKey);
+  //       emit(state.copyWith(successMessage: "Login success"));
+  //     },
+  //   );
+  // }
+
+  getIsLogin() async {
+    final isLogin = await cachUser.getUserId();
+    if (isLogin == 0) {
+      emit(state.copyWith(isLogin: false));
+    } else {
+      emit(state.copyWith(isLogin: true));
+    }
   }
 
   String _errorMessagre(Failure failure) {

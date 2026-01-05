@@ -1,31 +1,38 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:restapiproduct/core/classes/crud.dart';
 import 'package:restapiproduct/feature/auth/data/models/user_model.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../../core/error/exception.dart';
 
 abstract class RemoteDataSourceAuth {
   Future<Unit> sginup(UserModel user);
-  Future<int> login(String email, String password);
+  Future<Map<String, dynamic>> login(String email, String password);
   Future<String> profile();
   Future<Unit> logout();
 }
 
 const BASEURL = "http://192.168.1.7";
 
-class RemoteDataSourceWithHttp implements RemoteDataSourceAuth {
-  final CrudHttp crud;
-  RemoteDataSourceWithHttp({required this.crud});
+class RemoteDataSourceAuthWithHttp implements RemoteDataSourceAuth {
+  final http.Client cleint;
+  final CrudInterface crud;
+  RemoteDataSourceAuthWithHttp({required this.crud, required this.cleint});
 
   @override
-  Future<int> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     final Map<String, dynamic> data = {"email": email, "password": password};
-    final response = await crud.insertData('$BASEURL/login', data);
-    if (response['message'] == "success") {
-      final int userId = response["userId"] as int;
-      return Future.value(userId);
-    } else {
+    final response = await cleint.post(Uri.parse('$BASEURL/login'), body: data);
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> user =
+          jsonDecode(response.body) as Map<String, dynamic>;
+
+      return user;
+    } else if (response.statusCode == 404) {
       throw EmailNotCorrectException();
+    } else {
+      throw ServerException();
     }
   }
 
@@ -43,6 +50,7 @@ class RemoteDataSourceWithHttp implements RemoteDataSourceAuth {
   Future<String> profile() async {
     final response = await crud.getData("$BASEURL/profile");
     if (response['message'] == "success") {
+      print(response['API-key']);
       return response['API-key'];
     } else {
       throw SomethingNotCorrectExeption();

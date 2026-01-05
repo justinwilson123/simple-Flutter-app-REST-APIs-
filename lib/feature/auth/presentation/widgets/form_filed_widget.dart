@@ -5,30 +5,33 @@ class FormFiledWidget extends StatelessWidget {
   final Widget icon;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final bool obscureText;
   const FormFiledWidget({
     super.key,
     required this.hintText,
     required this.icon,
     this.controller,
     this.validator,
+    this.keyboardType,
+    this.obscureText = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.blue,
-      ),
       margin: const EdgeInsets.symmetric(vertical: 20),
       child: TextFormField(
         controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
         validator: validator,
         cursorColor: Colors.black,
         decoration: InputDecoration(
           hintText: hintText,
-          // icon: icon,
           prefixIcon: icon,
+          filled: true,
+          fillColor: Colors.blue,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.blue),
@@ -36,6 +39,10 @@ class FormFiledWidget extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.black),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.red),
           ),
         ),
       ),
