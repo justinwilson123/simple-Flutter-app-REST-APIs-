@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restapiproduct/feature/auth/presentation/controllers/login/login_cubit.dart';
+import 'package:restapiproduct/feature/auth/presentation/controllers/signup/signup_cubit.dart';
 import 'package:restapiproduct/feature/auth/presentation/pages/signup_page.dart';
 import 'package:restapiproduct/feature/auth/presentation/widgets/form_filed_widget.dart';
 import 'package:restapiproduct/feature/products/presentation/screen/products_screen.dart';
+import '../../../../conatiner.dart' as di;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-    _myKey.currentState!.dispose();
     super.dispose();
   }
 
@@ -79,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     FlutterLogo(size: 200),
                     FormFiledWidget(
+                      vertical: 20,
                       controller: _email,
                       validator: (valure) {
                         if (valure!.isEmpty) {
@@ -94,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       selector: (state) => state.showPass,
                       builder: (context, showPass) {
                         return FormFiledWidget(
+                          vertical: 20,
                           controller: _password,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -123,7 +126,12 @@ class _LoginPageState extends State<LoginPage> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => SignupPage()),
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider(
+                                  create: (_) => di.sl<SignupCubit>(),
+                                  child: SignupPage(),
+                                ),
+                              ),
                             );
                           },
                           child: Text("Signup"),

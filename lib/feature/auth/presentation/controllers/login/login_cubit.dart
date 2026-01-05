@@ -26,7 +26,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   showHidePassword() {
-    emit(state.copyWith(showPass: !state.showPass));
+    emit(state.copyWith(showPass: !state.showPass, errorMessage: ""));
   }
 
   getIsLogin() async {

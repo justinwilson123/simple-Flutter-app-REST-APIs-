@@ -16,22 +16,32 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   signup(UserEntity user) async {
-    emit(state.copyWith(isLoading: true,errorMessage: "",successMessage: ""));
+    emit(state.copyWith(isLoading: true, errorMessage: "", successMessage: ""));
     final result = await signupUseCase(user);
     emit(state.copyWith(isLoading: false));
     result.fold(
       (failure) => emit(state.copyWith(errorMessage: _errorMessagre(failure))),
-      (success) => emit(state.copyWith(successMessage: "User has been created successfully")),
+      (success) => emit(
+        state.copyWith(successMessage: "User has been created successfully"),
+      ),
     );
   }
 
-  String _errorMessagre(Failure failure){
+  showHidePass() {
+    emit(state.copyWith(showPass: !state.showPass, errorMessage: ""));
+  }
+
+  showHideRepass() {
+    emit(state.copyWith(showRepass: !state.showRepass, errorMessage: ""));
+  }
+
+  String _errorMessagre(Failure failure) {
     switch (failure) {
       case EmailUseingFailure():
-        return "Email has been using";
+        return "Email has been using OR is not email";
       case ServerFailure():
-      return "Some thing is wrong pleas try again";
-       case OffLineFailure():
+        return "Some thing is wrong pleas try again";
+      case OffLineFailure():
         return "No Internet";
       default:
         return "Something went wrong";

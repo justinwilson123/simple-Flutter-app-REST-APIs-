@@ -7,6 +7,7 @@ class FormFiledWidget extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final double vertical;
   const FormFiledWidget({
     super.key,
     required this.hintText,
@@ -15,12 +16,13 @@ class FormFiledWidget extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.obscureText = false,
+    this.vertical = 10,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20),
+      margin: EdgeInsets.symmetric(vertical: vertical),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,

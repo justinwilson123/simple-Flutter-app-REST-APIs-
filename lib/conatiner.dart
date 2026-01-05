@@ -64,7 +64,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<RemoteDataSourceAuth>(
-    () => RemoteDataSourceAuthWithHttp(crud: sl(), cleint: sl()),
+    () => RemoteDataSourceAuthWithHttp(crud: sl(), client: sl()),
   );
 
   sl.registerLazySingleton(() => LoginUseCase(sl()));

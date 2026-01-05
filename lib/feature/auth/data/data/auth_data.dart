@@ -16,14 +16,14 @@ abstract class RemoteDataSourceAuth {
 const BASEURL = "http://192.168.1.7";
 
 class RemoteDataSourceAuthWithHttp implements RemoteDataSourceAuth {
-  final http.Client cleint;
+  final http.Client client;
   final CrudInterface crud;
-  RemoteDataSourceAuthWithHttp({required this.crud, required this.cleint});
+  RemoteDataSourceAuthWithHttp({required this.crud, required this.client});
 
   @override
   Future<Map<String, dynamic>> login(String email, String password) async {
     final Map<String, dynamic> data = {"email": email, "password": password};
-    final response = await cleint.post(Uri.parse('$BASEURL/login'), body: data);
+    final response = await client.post(Uri.parse('$BASEURL/login'), body: data);
     if (response.statusCode == 201) {
       final Map<String, dynamic> user =
           jsonDecode(response.body) as Map<String, dynamic>;
@@ -59,11 +59,22 @@ class RemoteDataSourceAuthWithHttp implements RemoteDataSourceAuth {
 
   @override
   Future<Unit> sginup(UserModel user) async {
-    final response = await crud.insertData("$BASEURL/signup", user.toJson());
-    if (response['message'] == "success") {
+    final response = await client.post(
+      Uri.parse('$BASEURL/signup'),
+      body: user.toJson(),
+    );
+    if (response.statusCode == 201) {
       return Future.value(unit);
-    } else {
+    } else if (response.statusCode == 422) {
       throw EmailUseingException();
+    } else {
+      throw ServerException();
     }
+    // final response = await crud.insertData("$BASEURL/signup", user.toJson());
+    // if (response['message'] == "success") {
+    //   return Future.value(unit);
+    // } else {
+    //   throw EmailUseingException();
+    // }
   }
 }
