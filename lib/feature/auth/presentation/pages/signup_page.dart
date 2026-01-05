@@ -13,7 +13,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       body: Container(
-        height: context.size!.height,
+        height: MediaQuery.of(context).size.height,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: SingleChildScrollView(
           child: Form(
