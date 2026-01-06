@@ -25,7 +25,7 @@ class ProductsCubit extends Cubit<ProductsState> {
   }) : super(ProductsInitial());
 
   getAllPoduct() async {
-    emit(state.copyWith(messageError: "", products: []));
+    emit(state.copyWith(messageError: "", products: [], messageSuccess: ""));
     final either = await getAllProduct.call();
     either.fold(
       (failure) {
@@ -70,7 +70,7 @@ class ProductsCubit extends Cubit<ProductsState> {
   }
 
   addProduct({required String name, required int price}) async {
-    emit(state.copyWith(messageError: ""));
+    emit(state.copyWith(messageError: "", messageSuccess: ""));
     final productEntity = ProductEntity(
       name: name,
       price: price,
