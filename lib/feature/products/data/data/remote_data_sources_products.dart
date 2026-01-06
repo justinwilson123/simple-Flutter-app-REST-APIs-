@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:restapiproduct/core/classes/crud.dart';
 import 'package:restapiproduct/core/error/exception.dart';
-
 import '../models/products_model.dart';
 
 abstract class RemoteDataSourceProducts {
@@ -42,7 +41,7 @@ class RemoteDataSourcesProductsImp implements RemoteDataSourceProducts {
   @override
   Future<Unit> deleteProduct(int id) async {
     final response = await crud.deleteData("$BASEURL/${id.toString()}");
-    if (response['message'] == "Product $id deleted") {
+    if (response['message'] == "product deleted") {
       return unit;
     } else {
       throw ServerException();
@@ -65,7 +64,7 @@ class RemoteDataSourcesProductsImp implements RemoteDataSourceProducts {
   Future<Unit> updateProduct(int id, ProductsModel product) async {
     final data = product.toJson();
     final result = await crud.updateData("$BASEURL/${id.toString()}", data);
-    if (result["message"] == "product $id updated") {
+    if (result["message"] == "product updated") {
       return unit;
     } else {
       throw ServerException();
