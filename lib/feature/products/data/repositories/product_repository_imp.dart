@@ -106,10 +106,12 @@ class ProductRepositoryImp implements ProductRepository {
         await remoteDataSourceProducts.updateProduct(product.id!, products);
         return Right(unit);
       } on ServerException {
+        print("++++++++++++++++++++++++++++++==");
         return Left(ServerFailure());
       } on NoDataException {
         return Left(NoDataFailure());
-      } catch (_) {
+      } catch (e) {
+        // print(e);
         return Left(ServerFailure());
       }
     } else {

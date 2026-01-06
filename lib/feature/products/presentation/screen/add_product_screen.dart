@@ -4,13 +4,21 @@ import 'package:restapiproduct/feature/products/presentation/screen/products_scr
 
 import '../controller/cubit/products_cubit.dart';
 
-class AddProductScreen extends StatelessWidget {
+class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({super.key});
+
+  @override
+  State<AddProductScreen> createState() => _AddProductScreenState();
+}
+
+class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _priceController = TextEditingController(
     text: "0",
   );
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  AddProductScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

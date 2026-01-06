@@ -19,8 +19,8 @@ class ProductsModel extends ProductEntity {
   Map<String, dynamic> toJson() {
     return {
       "name": name,
-      "price": price ?? 0,
-      "is_available": isAvailable ?? false,
+      "price": price.toString(),
+      "is_available": isAvailable.toString(),
     };
   }
 }
