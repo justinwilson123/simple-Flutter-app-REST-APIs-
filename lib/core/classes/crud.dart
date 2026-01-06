@@ -16,11 +16,17 @@ abstract class CrudInterface {
 class CrudHttp implements CrudInterface {
   final http.Client client;
   final SaveSecureStorage saveSecureStorage;
-  CrudHttp({required this.client, required this.saveSecureStorage});
+  CrudHttp({required this.client, required this.saveSecureStorage}) {
+    _getApikey();
+  }
+  String? apikey;
+  _getApikey() async {
+    apikey = await saveSecureStorage.getToken();
+    return apikey!;
+  }
 
   @override
   Future<List> getAllData(String uri) async {
-    final apikey = await saveSecureStorage.getToken();
     final response = await client.get(
       Uri.parse(uri),
       headers: {'X-API-Key': apikey!},
@@ -38,7 +44,7 @@ class CrudHttp implements CrudInterface {
     final response = await client.post(
       Uri.parse(uri),
       body: data,
-      headers: {'X-API-Key': "eb8d3a53b144b2ccdd7c68b07d4ab15c"},
+      headers: {'X-API-Key': apikey!},
     );
     print(response.statusCode);
     print(response.body);
@@ -54,7 +60,7 @@ class CrudHttp implements CrudInterface {
   Future<Map> deleteData(String uri) async {
     final response = await client.delete(
       Uri.parse(uri),
-      headers: {'X-API-Key': "eb8d3a53b144b2ccdd7c68b07d4ab15c"},
+      headers: {'X-API-Key': apikey!},
     );
     if (response.statusCode == 200) {
       final Map responseBody = jsonDecode(response.body) as Map;
@@ -66,7 +72,10 @@ class CrudHttp implements CrudInterface {
 
   @override
   Future<Map> getData(String uri) async {
-    final response = await client.get(Uri.parse(uri));
+    final response = await client.get(
+      Uri.parse(uri),
+      headers: {'X-API-Key': apikey!},
+    );
     if (response.statusCode == 200) {
       final Map responseBody = jsonDecode(response.body) as Map;
       return responseBody;
@@ -80,8 +89,10 @@ class CrudHttp implements CrudInterface {
     final response = await client.patch(
       Uri.parse(uri),
       body: data,
-      headers: {'X-API-Key': "eb8d3a53b144b2ccdd7c68b07d4ab15c"},
+      headers: {'X-API-Key': apikey!},
     );
+    print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
       final Map responseBody = jsonDecode(response.body);
       return responseBody;

@@ -5,19 +5,29 @@ import 'package:restapiproduct/feature/products/domain/entity/product_entity.dar
 import '../controller/cubit/products_cubit.dart';
 import 'products_screen.dart';
 
-class UpdateProductScreen extends StatelessWidget {
+class UpdateProductScreen extends StatefulWidget {
   final ProductEntity product;
+
+  const UpdateProductScreen({super.key, required this.product});
+
+  @override
+  State<UpdateProductScreen> createState() => _UpdateProductScreenState();
+}
+
+class _UpdateProductScreenState extends State<UpdateProductScreen> {
   late final TextEditingController _nameController = TextEditingController(
-    text: product.name,
+    text: widget.product.name,
   );
+
   late final TextEditingController _priceController = TextEditingController(
-    text: product.price.toString(),
+    text: widget.product.price.toString(),
   );
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  UpdateProductScreen({super.key, required this.product});
+
   @override
   Widget build(BuildContext context) {
-    context.read<ProductsCubit>().isAvailable(product.isAvailable!);
+    context.read<ProductsCubit>().isAvailable(widget.product.isAvailable!);
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -87,7 +97,7 @@ class UpdateProductScreen extends StatelessWidget {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           context.read<ProductsCubit>().updateProdcut(
-                            id: product.id!,
+                            id: widget.product.id!,
                             name: _nameController.text,
                             price: _priceController.text,
                           );
