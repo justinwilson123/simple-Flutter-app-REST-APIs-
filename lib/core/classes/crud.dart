@@ -91,8 +91,6 @@ class CrudHttp implements CrudInterface {
       body: data,
       headers: {'X-API-Key': apikey!},
     );
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode == 200) {
       final Map responseBody = jsonDecode(response.body);
       return responseBody;
